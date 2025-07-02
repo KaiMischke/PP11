@@ -91,8 +91,25 @@ In this exercise you will:
 #### Reflection Questions
 
 1. **How do you link `prev` and `next` pointers correctly using a static array?**
+
+**Lösung zu Aufgabe 1:**
+Indem man die Nachbaradressen im Array zuweist:
+`nodes[i].prev = (i > 0) ? &nodes[i - 1] : NULL;`
+`nodes[i].next = (i < N - 1) ? &nodes[i + 1] : NULL;`
+
 2. **What are advantages and limitations of compile-time vs. dynamic allocation?**
+**Lösung zu Aufgabe 2:**
+**Statisch:**
++ Schnell, sicher, kein `malloc/free`
+- Unflexibel, feste Größe.
+
+**Dynamisch:**
++ Flexibel, größenunabhängig.
+- Aufwändiger, fehleranfällig (Leaks, Pointer-Probleme).
+
 3. **How would you extend this static list to include additional data fields?**
+**Lösung zu Aufgabe 3:**
+Einfach die `DNode`-Struktur erweitern (z. B. um `id`, `label`) oder `data` auf eine eigene Nutzdatenstruktur zeigen lassen.
 
 ---
 
@@ -159,8 +176,26 @@ In this exercise you will:
 #### Reflection Questions
 
 1. **Why is `malloc` necessary when adding nodes dynamically?**
+**Lösung zu Aufgabe 1:**
+`malloc` reserviert zur Laufzeit Speicher auf dem Heap für jeden neuen Knoten.
+Ohne `malloc` gäbe es keine dauerhafte Speicherstelle für neue Knoten – sie würden z. B. nur lokal in einer Funktion existieren und beim Verlassen ungültig werden.
+
 2. **How can you traverse the list to print each node’s address and value?**
+**Lösung zu Aufgabe 2:**
+Mit einer einfachen Schleife:
+
+`for (SNode *p = head; p != NULL; p = p->next)
+    printf("Node at %p: %d\n", (void*)p, p->value);`
+
+Dabei geht man vom Kopf aus durch die `next`-Zeiger bis zum Ende (`NULL`).
+
 3. **What are the consequences of not freeing the list before exit?**
+**Lösung zu Aufgabe 3:**
+Wenn `free_list(head)` nicht aufgerufen wird:
+
+- Bleibt der Speicher aller Knoten im Heap belegt (Memory Leak).
+- Bei wiederholtem Programmstart oder in längeren Programmen kann das zu Speichererschöpfung führen.
+- Tools wie Valgrind melden Speicherlecks (z. B. „still reachable“).
 
 ---
 
@@ -244,8 +279,23 @@ gcc -o solutions/json_main solutions/json_main.c solutions/json_list.o -ljansson
 #### Reflection Questions
 
 1. **How does using `getopt` make the program more flexible than `argv[1]`?**
+**Lösung zu Aufgabe 1:**
+`getopt` ermöglicht das einfache Parsen von mehreren und optionalen Kommandozeilen-Optionen mit Flags (z.B. `-i filename`), unabhängig von der Reihenfolge.
+`argv[1]` ist nur eine feste Position und erlaubt keine komfortable Erweiterung oder optionale Argumente.
+
+
 2. **What happens if the user omits the `-i` option?**
+**Lösung zu Aufgabe 2:**
+Das Programm ruft die `usage`-Funktion auf und beendet sich mit einer Fehlermeldung, weil die Eingabedatei nicht angegeben wurde.
+
+
+
 3. **How can you validate that the JSON file loaded is indeed an array?**
+**Lösung zu Aufgabe 3:**
+
+Nach dem Laden mit `json_load_file` prüft man mit `json_is_array(root)`nur wenn das `true` zurückgibt, ist das JSON-Root ein Array.
+
+
 
 ---
 
